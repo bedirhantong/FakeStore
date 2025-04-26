@@ -104,7 +104,7 @@ export const CustomSplash: React.FC<CustomSplashProps> = ({ onAnimationComplete 
 
       {/* Text */}
       <Animated.View style={[styles.textContainer, { opacity: textOpacity }]}>
-        <Text style={styles.title}>AI Filter</Text>
+        <Text style={styles.title}>Fake Store</Text>
         <Text style={styles.subtitle}>Smart Shopping Experience</Text>
       </Animated.View>
 
