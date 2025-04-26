@@ -1,6 +1,6 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { Stack, Tabs } from 'expo-router';
+import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { View, Platform } from 'react-native';
@@ -38,78 +38,104 @@ export default function RootLayout() {
         style={colorScheme === 'dark' ? 'light' : 'dark'} 
         translucent={true}
       />
-      <Tabs
-        screenOptions={{
-          headerShown: false,
-          tabBarStyle: {
-            backgroundColor: colorScheme === 'dark' ? '#1a1a1a' : '#ffffff',
-            borderTopColor: colorScheme === 'dark' ? '#333333' : '#e5e5e5',
-            height: Platform.OS === 'ios' ? 88 : 60,
-            paddingBottom: Platform.OS === 'ios' ? 28 : 8,
-            paddingTop: 8,
-          },
-          tabBarActiveTintColor: '#3498db',
-          tabBarInactiveTintColor: colorScheme === 'dark' ? '#888888' : '#999999',
-          tabBarShowLabel: true,
-          tabBarLabelStyle: {
-            fontSize: 12,
-            fontWeight: '500',
-          },
-        }}
-      >
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: 'Home',
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="home-outline" size={size} color={color} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="categories"
-          options={{
-            title: 'Categories',
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="grid-outline" size={size} color={color} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="cart"
-          options={{
-            title: 'Cart',
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="cart-outline" size={size} color={color} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="favorites"
-          options={{
-            title: 'Favorites',
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="heart-outline" size={size} color={color} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="profile"
-          options={{
-            title: 'Profile',
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="person-outline" size={size} color={color} />
-            ),
-          }}
-        />
-      </Tabs>
       <Stack
         screenOptions={{
-          headerShown: false,
-          presentation: 'modal',
+          headerStyle: {
+            backgroundColor: colorScheme === 'dark' ? '#1a1a1a' : '#ffffff',
+          },
+          headerShadowVisible: false,
+          headerTitleStyle: {
+            fontWeight: '600',
+            fontSize: 18,
+          },
+          headerTintColor: colorScheme === 'dark' ? '#ffffff' : '#333333',
+          // Modern bir görünüm için header'ı özelleştiriyoruz
+          headerTitleAlign: 'center',
+          // Animasyon ekleyelim
+          animation: 'slide_from_right',
+          // Daha modern bir görünüm için
+          contentStyle: {
+            backgroundColor: colorScheme === 'dark' ? '#121212' : '#f8f9fa',
+          },
+          // Header yüksekliğini ayarlayalım
         }}
       >
-        <Stack.Screen name="product/[id]" />
+        <Stack.Screen 
+          name="index" 
+          options={{ 
+            title: 'AI Filter',
+            // Header'a özel butonlar ekleyelim
+            headerLeft: () => (
+              <Ionicons 
+                name="menu-outline" 
+                size={24} 
+                color={colorScheme === 'dark' ? '#ffffff' : '#333333'} 
+                style={{ marginLeft: 16 }}
+              />
+            ),
+            headerRight: () => (
+              <Ionicons 
+                name="notifications-outline" 
+                size={24} 
+                color={colorScheme === 'dark' ? '#ffffff' : '#333333'} 
+                style={{ marginRight: 16 }}
+              />
+            ),
+            // Header'ı gizleyelim çünkü ProductListScreen içinde kendi header'ımızı kullanacağız
+            headerShown: false,
+          }} 
+        />
+        <Stack.Screen 
+          name="product/[id]" 
+          options={{ 
+            title: '',
+            headerTransparent: true,
+            headerLeft: ({ canGoBack }) => canGoBack ? (
+              <View style={{
+                width: 36,
+                height: 36,
+                borderRadius: 18,
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginLeft: 16,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 4,
+                elevation: 3,
+              }}>
+                <Ionicons 
+                  name="chevron-back" 
+                  size={24} 
+                  color="#333333" 
+                />
+              </View>
+            ) : null,
+            headerRight: () => (
+              <View style={{
+                width: 36,
+                height: 36,
+                borderRadius: 18,
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginRight: 16,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 4,
+                elevation: 3,
+              }}>
+                <Ionicons 
+                  name="heart-outline" 
+                  size={20} 
+                  color="#333333" 
+                />
+              </View>
+            ),
+          }} 
+        />
       </Stack>
     </ThemeProvider>
   );
