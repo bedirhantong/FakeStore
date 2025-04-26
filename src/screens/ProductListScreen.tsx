@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
   },
   productsList: {
     padding: 12,
-    paddingBottom: Platform.OS === 'ios' ? 120 : 100,
+    paddingBottom: Platform.OS === 'ios' ? 140 : 120,
   },
   productsRow: {
     justifyContent: 'space-between',
