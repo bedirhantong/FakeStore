@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { usePathname, router } from 'expo-router';
+import { useColorScheme } from '@/hooks/useColorScheme';
 
 const { width } = Dimensions.get('window');
 
@@ -28,17 +29,33 @@ const TABS: TabItem[] = [
 
 export const CustomBottomBar = () => {
   const currentPath = usePathname();
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+
+  console.log('Current path:', currentPath); // Debug için
 
   const handleTabPress = (path: string) => {
-    router.push(path);
+    router.push(path as any);
+  };
+
+  const isTabActive = (tabPath: string) => {
+    // Home tab için özel kontrol
+    if (tabPath === '/(tabs)') {
+      return currentPath === '/' || currentPath === '/(tabs)' || currentPath === '/(tabs)/index';
+    }
+    // Diğer tablar için normal kontrol
+    const cleanPath = tabPath.replace('/(tabs)', '');
+    return currentPath === cleanPath;
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.bottomBar}>
-        {TABS.map((tab, index) => {
-          const isActive = currentPath === tab.path || 
-            (tab.path === '/(tabs)' && currentPath === '/');
+      <View style={[
+        styles.bottomBar,
+        { backgroundColor: isDark ? '#1a1a1a' : '#ffffff' }
+      ]}>
+        {TABS.map((tab) => {
+          const isActive = isTabActive(tab.path);
           
           return (
             <TouchableOpacity
@@ -50,17 +67,19 @@ export const CustomBottomBar = () => {
               <View style={styles.tabContent}>
                 <View style={[
                   styles.iconContainer,
-                  isActive && styles.activeIconContainer
+                  isActive && styles.activeIconContainer,
+                  isDark && { backgroundColor: isActive ? '#2c3e50' : 'transparent' }
                 ]}>
                   <Ionicons
-                    name={`${tab.icon}${isActive ? '' : '-outline'}`}
+                    name={(`${tab.icon}${isActive ? '' : '-outline'}`) as any}
                     size={22}
-                    color={isActive ? '#3498db' : '#999'}
+                    color={isActive ? '#3498db' : isDark ? '#888' : '#999'}
                   />
                 </View>
                 <Text style={[
                   styles.tabLabel,
-                  isActive && styles.activeTabLabel
+                  isActive && styles.activeTabLabel,
+                  { color: isDark ? (isActive ? '#3498db' : '#888') : (isActive ? '#3498db' : '#999') }
                 ]}>
                   {tab.label}
                 </Text>
@@ -85,7 +104,6 @@ const styles = StyleSheet.create({
   },
   bottomBar: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
     borderRadius: 25,
     padding: 10,
     width: width - 32,
@@ -121,11 +139,9 @@ const styles = StyleSheet.create({
   },
   tabLabel: {
     fontSize: 12,
-    color: '#999',
     marginTop: 2,
   },
   activeTabLabel: {
-    color: '#3498db',
     fontWeight: '600',
   },
 }); 
