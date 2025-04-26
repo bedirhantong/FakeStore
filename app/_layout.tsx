@@ -61,29 +61,16 @@ export default function RootLayout() {
         }}
       >
         <Stack.Screen 
-          name="index" 
+          name="index"
           options={{ 
-            title: 'AI Filter',
-            // Header'a özel butonlar ekleyelim
-            headerLeft: () => (
-              <Ionicons 
-                name="menu-outline" 
-                size={24} 
-                color={colorScheme === 'dark' ? '#ffffff' : '#333333'} 
-                style={{ marginLeft: 16 }}
-              />
-            ),
-            headerRight: () => (
-              <Ionicons 
-                name="notifications-outline" 
-                size={24} 
-                color={colorScheme === 'dark' ? '#ffffff' : '#333333'} 
-                style={{ marginRight: 16 }}
-              />
-            ),
-            // Header'ı gizleyelim çünkü ProductListScreen içinde kendi header'ımızı kullanacağız
             headerShown: false,
-          }} 
+          }}
+        />
+        <Stack.Screen 
+          name="(tabs)"
+          options={{ 
+            headerShown: false,
+          }}
         />
         <Stack.Screen 
           name="product/[id]" 

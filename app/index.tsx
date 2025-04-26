@@ -1,3 +1,5 @@
-import { ProductListScreen } from '../src/screens/ProductListScreen';
+import { Redirect } from 'expo-router';
 
-export default ProductListScreen; 
+export default function Index() {
+  return <Redirect href="/(tabs)" />;
+} 
