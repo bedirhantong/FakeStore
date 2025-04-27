@@ -1,6 +1,6 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { View, Platform } from 'react-native';
@@ -8,10 +8,13 @@ import 'react-native-reanimated';
 import { CustomSplash } from '../src/components/CustomSplash';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Ionicons } from '@expo/vector-icons';
+import { useAuthStore } from '../src/store/auth.store';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [isSplashVisible, setIsSplashVisible] = useState(true);
+  const router = useRouter();
+  const { token, checkAuth } = useAuthStore();
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     // Daha modern fontlar ekleyebilirsiniz
@@ -19,6 +22,20 @@ export default function RootLayout() {
     // 'Poppins-Medium': require('../assets/fonts/Poppins-Medium.ttf'),
     // 'Poppins-Bold': require('../assets/fonts/Poppins-Bold.ttf'),
   });
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  useEffect(() => {
+    if (!isSplashVisible) {
+      if (!token) {
+        router.replace('/auth/login');
+      } else {
+        router.replace('/(tabs)');
+      }
+    }
+  }, [token, isSplashVisible]);
 
   const handleSplashComplete = () => {
     setIsSplashVisible(false);
@@ -68,6 +85,12 @@ export default function RootLayout() {
         />
         <Stack.Screen 
           name="(tabs)"
+          options={{ 
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen 
+          name="auth"
           options={{ 
             headerShown: false,
           }}

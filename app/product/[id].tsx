@@ -9,10 +9,13 @@ import {
   StyleSheet,
   Animated,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import { useLocalSearchParams, Stack, router } from 'expo-router';
 import { ProductService } from '../../src/api/services/product.service';
 import { Product } from '../../src/api/types/product.types';
+import { useCartStore } from '../../src/store/cart.store';
+import { useAuthStore } from '../../src/store/auth.store';
 
 const { width } = Dimensions.get('window');
 const IMAGE_SIZE = width;
@@ -24,6 +27,8 @@ export default function ProductDetailScreen() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const fadeAnim = useState(new Animated.Value(0))[0];
+  const { addToCart } = useCartStore();
+  const { user } = useAuthStore();
 
   useEffect(() => {
     loadProduct();
@@ -71,6 +76,49 @@ export default function ProductDetailScreen() {
   const handleRetry = () => {
     setLoading(true);
     loadProduct();
+  };
+
+  const handleAddToCart = async () => {
+    if (!user) {
+      Alert.alert(
+        'Sign In Required',
+        'Please sign in to add items to your cart',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Sign In',
+            onPress: () => router.push('/auth/login'),
+          },
+        ]
+      );
+      return;
+    }
+
+    try {
+      await addToCart(Number(id), quantity);
+      Alert.alert(
+        'Success',
+        'Product added to cart successfully',
+        [
+          {
+            text: 'Continue Shopping',
+            style: 'cancel',
+          },
+          {
+            text: 'View Cart',
+            onPress: () => router.push('/(tabs)/cart'),
+          },
+        ]
+      );
+    } catch (error) {
+      Alert.alert(
+        'Error',
+        'Failed to add product to cart. Please try again.'
+      );
+    }
   };
 
   if (loading) {
@@ -245,7 +293,10 @@ export default function ProductDetailScreen() {
             <Text style={styles.quantityButtonText}>+</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.addToCartButton}>
+        <TouchableOpacity 
+          style={styles.addToCartButton}
+          onPress={handleAddToCart}
+        >
           <Text style={styles.addToCartText}>Add to Cart</Text>
         </TouchableOpacity>
       </View>
